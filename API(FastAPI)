@@ -1,0 +1,16 @@
+from fastapi import FastAPI, UploadFile, File
+from app.ingest import ingest_docs
+from app.retrieval import retrieve_chunks
+from app.synthesis import synthesize_answer
+
+app = FastAPI()
+
+@app.post("/upload/")
+async def upload_document(file: UploadFile = File(...)):
+    return ingest_docs(file)
+
+@app.post("/query/")
+async def query_search(query: str):
+    relevant_chunks = retrieve_chunks(query)
+    answer = synthesize_answer(query, relevant_chunks)
+    return {"answer": answer}
