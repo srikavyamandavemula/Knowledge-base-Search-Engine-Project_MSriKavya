@@ -1,0 +1,19 @@
+from fastapi import FastAPI, UploadFile, File
+from app.ingest import ingest_docs
+from app.retrieval import retrieve_chunks
+from app.synthesis import synthesize_answer
+
+app = FastAPI(title="Knowledge-base Search Engine")
+
+@app.post("/upload/")
+async def upload_document(file: UploadFile = File(...)):
+    """Endpoint to ingest documents."""
+    result = await ingest_docs(file)
+    return {"status": "ingested", "details": result}
+
+@app.post("/query/")
+async def query_search(query: str):
+    """Endpoint to query ingested documents."""
+    relevant_chunks = retrieve_chunks(query)
+    answer = synthesize_answer(query, relevant_chunks)
+    return {"answer": answer}
