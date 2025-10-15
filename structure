@@ -1,0 +1,21 @@
+knowledge-base-search-engine/
+│
+├── app/
+│   ├── main.py            # FastAPI application
+│   ├── ingest.py          # PDF/Text ingestion, indexing
+│   ├── retrieval.py       # Embedding, similarity search
+│   ├── synthesis.py       # LLM-based answer synthesis
+│   └── utils.py           # Support functions
+│
+├── demo/
+│   └── streamlit_app.py   # Optional frontend demo
+│
+├── docs/
+│   └── sample_documents/  # Example docs for testing
+│
+├── tests/
+│   └── test_api.py        # Basic tests
+│
+├── requirements.txt
+├── README.md
+└── demo_video.mp4         # Demo walk-through
