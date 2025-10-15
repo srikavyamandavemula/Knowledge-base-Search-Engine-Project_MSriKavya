@@ -1,0 +1,19 @@
+import os
+import openai
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def synthesize_answer(query, chunks):
+    context = "\n\n".join(chunks)
+    prompt = f"Using these documents, answer the user’s question succinctly.\n\nContext:\n{context}\n\nQuestion: {query}\nAnswer:"
+
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        temperature=0.3,
+        max_tokens=150,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    return response.choices[0].text.strip()
