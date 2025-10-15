@@ -1,0 +1,33 @@
+import tempfile
+from sentence_transformers import SentenceTransformer
+import fitz  # PyMuPDF for PDF parsing
+
+embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+
+async def ingest_docs(file):
+    # Save uploaded file temporarily
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
+        tmpfile.write(await file.read())
+        path = tmpfile.name
+
+    # Extract text from PDF
+    doc = fitz.open(path)
+    texts = []
+    for page in doc:
+        texts.append(page.get_text())
+    full_text = "\n".join(texts)
+
+    # Chunking (simple split by paragraphs here)
+    chunks = [chunk for chunk in full_text.split('\n\n') if chunk.strip()]
+
+    # Generate embeddings
+    embeddings = embedding_model.encode(chunks, show_progress_bar=True)
+
+    # Save chunks and embeddings to a simple in-memory store (extend to DB/FAISS)
+    # For demo: store in global dict
+    global DOCUMENT_STORE
+    DOCUMENT_STORE = {"chunks": chunks, "embeddings": embeddings}
+
+    return {"chunks_indexed": len(chunks)}
+
+DOCUMENT_STORE = {}
