@@ -1,0 +1,18 @@
+import streamlit as st
+import requests
+
+API_URL = "http://localhost:8000"
+
+st.title("Knowledge-base Search Engine Demo")
+
+uploaded_file = st.file_uploader("Upload a PDF Document", type=["pdf"])
+if uploaded_file is not None:
+    files = {"file": (uploaded_file.name, uploaded_file, "application/pdf")}
+    response = requests.post(f"{API_URL}/upload/", files=files)
+    st.write(response.json())
+
+query = st.text_input("Enter your query:")
+if st.button("Get Answer") and query:
+    response = requests.post(f"{API_URL}/query/", json={"query": query})
+    answer = response.json().get("answer", "No answer returned")
+    st.write("Answer:", answer)
